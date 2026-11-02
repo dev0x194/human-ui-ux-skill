@@ -1,0 +1,8 @@
+{
+  "name": "daymark-desktop-example",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Illustrative desktop-only UI for Human UI/UX skill",
+  "main": "main.cjs",
+  "scripts": { "start": "electron ." }
+}

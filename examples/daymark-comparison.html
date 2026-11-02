@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#171a19" />
+  <title>Daymark — Vibe Coded vs Art Directed UI</title>
+  <style>
+    :root { font-family: Arial, Helvetica, sans-serif; color: #f5f4f0; background: #171a19; font-synthesis: none; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 320px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid #e1f272; outline-offset: 3px; }
+    .study { max-width: 1600px; margin: 0 auto; padding: 0 24px 44px; }
+    .study-header { display: flex; justify-content: space-between; gap: 20px; align-items: center; min-height: 100px; padding: 20px 0; }
+    .study-brand { display: flex; align-items: center; gap: 16px; }
+    .study-icon { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #6c736d; color: #e5f07f; border-radius: 50%; font-family: Georgia,serif; font-size: 25px; line-height: 1; }
+    .study-title { margin: 0; font-size: 19px; letter-spacing: -.045em; font-weight: 740; }
+    .study-sub { font-size: 12px; color: #adb1ab; margin: 5px 0 0; }
+    .study-meta { text-align: right; font-size: 10px; line-height: 1.8; letter-spacing: .12em; color: #aaaFA9; text-transform: uppercase; }
+    .toolbar { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 13px 16px; border: 1px solid #414740; border-radius: 10px 10px 0 0; background: #242825; }
+    .toolbar-info { font-size: 12px; color: #b7bdb5; letter-spacing: .012em; }
+    .toolbar-controls { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+    .segmented { display: inline-flex; padding: 3px; border-radius: 7px; background: #151816; gap: 3px; }
+    .segmented button { border: 0; color: #bac0b9; background: transparent; border-radius: 5px; padding: 8px 11px; font-size: 11px; font-weight: 700; }
+    .segmented button.active { color: #171a18; background: #e3e5de; }
+    .tool-btn { color: #e9eee6; font-weight: 700; background: transparent; border: 1px solid #6a706b; font-size: 11px; padding: 10px 12px; border-radius: 6px; }
+    .tool-btn[aria-pressed="true"] { border-color: #dce87d; color: #e4ef8d; }
+    .comparison { display: flex; width: 100%; align-items: stretch; border: 1px solid #414740; border-top: 0; border-radius: 0 0 10px 10px; overflow: hidden; background: #232825; }
+    .comparison[data-view="vibe"] .panel-crafted, .comparison[data-view="crafted"] .panel-vibe { display:none; }
+    .comparison.mobile { flex-direction: column; align-items: center; gap: 32px; padding: 24px 14px; }
+    .comparison.mobile .panel { width: min(100%, 430px); flex: none; border: 1px solid #414740; border-radius: 4px; }
+    .comparison.mobile .panel .pane-nav-links { display: none; }
+    .comparison.mobile .panel .pane-nav { padding-left: 18px; padding-right: 18px; }
+    .comparison.mobile .panel-vibe .vibe-hero { padding-left: 23px; padding-right: 23px; }
+    .comparison.mobile .panel-crafted .crafted-hero { padding-left: 26px; padding-right: 26px; }
+    .comparison.mobile .panel-crafted .crafted-workspace { margin-left: 18px; margin-right: 18px; }
+    .comparison.mobile .panel-crafted .crafted-bottom { padding-left: 26px; padding-right: 26px; }
+    .panel { flex: 1 1 0; min-width: 0; position: relative; overflow: hidden; }
+    .panel + .panel { border-left: 1px solid #40453f; }
+    .comparison.mobile .panel + .panel { border-left: 1px solid #414740; }
+    .panel-label { min-height: 49px; padding: 0 23px; display: flex; justify-content: space-between; align-items: center; background: #1d211e; color: #d6d9d1; border-bottom: 1px solid #414740; gap: 8px; }
+    .panel-label span:first-child { font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    .panel-label span:last-child { font-size: 10px; color: #8f9990; }
+    .panel-label .label-number { color: #e1ec8e; margin-right: 9px; }
+    /* LEFT: recognizable, polished-but-generic AI template treatment */
+    .vibe-site { color: #1f2250; font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: radial-gradient(ellipse at 92% 15%, #eee6ff 0, transparent 44%), radial-gradient(ellipse at 10% 43%, #e1f2ff 0, transparent 45%), #fbfaff; min-height: 790px; }
+    .pane-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 79px; padding: 0 25px; }
+    .vibe-logo { display: flex; align-items: center; gap: 8px; font-size: 17px; letter-spacing: -.055em; font-weight: 850; white-space: nowrap; }
+    .vibe-logo-mark { display: grid; place-items: center; width: 27px; height: 27px; color: white; border-radius: 8px; background: linear-gradient(135deg,#7867ff,#bc7cff); font-size: 17px; font-weight: 600; }
+    .pane-nav-links { display:flex; gap: 19px; align-items:center; }
+    .pane-nav a { text-decoration: none; color: inherit; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .vibe-nav-cta { background: #6856ef; color: white !important; padding: 11px 14px; border-radius: 8px; border: 0; font-size: 10px; white-space: nowrap; font-weight: 750; box-shadow: 0 5px 13px #6a54e626; }
+    .vibe-hero { padding: 58px 27px 42px; text-align: center; }
+    .vibe-pill { display: inline-flex; align-items: center; gap: 7px; padding: 9px 14px; border-radius: 999px; border: 1px solid #e0dcff; background: #fffaffc7; color: #6b57d3; font-size: 10px; font-weight: 800; box-shadow: 0 4px 12px #7b76bb0a; }
+    .vibe-pill-dot { color: #815ff5; }
+    .vibe-hero h2 { max-width: 535px; margin: 24px auto 18px; font-size: clamp(35px,3.35vw,55px); line-height: 1.095; letter-spacing: -.068em; font-weight: 850; }
+    .vibe-hero h2 strong { display:block; background: linear-gradient(90deg,#705bea, #b15ec8); background-clip: text; -webkit-background-clip:text; color: transparent; }
+    .vibe-desc { margin: auto; max-width: 440px; font-size: 13px; line-height: 1.85; color: #727594; }
+    .vibe-actions { display: flex; justify-content: center; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
+    .vibe-primary, .vibe-secondary { min-height: 41px; padding: 0 17px; border-radius: 9px; font-size: 11px; font-weight: 780; }
+    .vibe-primary { background: linear-gradient(135deg,#705bf4,#8965ef); color: white; border: 0; box-shadow: 0 10px 24px #775eee30; }
+    .vibe-secondary { background: #fff; color: #353657; border: 1px solid #e5e3f0; box-shadow: 0 6px 14px #2b2a7410; }
+    .vibe-proof { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 28px; font-size: 10px; color: #7e8099; }
+    .vibe-avatars { display: flex; padding-left: 5px; }
+    .vibe-avatars i { width: 22px; height: 22px; margin-left: -5px; display: grid; place-items:center; font-size: 9px; font-style: normal; border: 2px solid white; border-radius: 50%; background: #d0c5ff; color: #5f4db0; }
+    .vibe-avatars i:nth-child(2) { background:#ffcbbb;color:#9c4b44; }
+    .vibe-avatars i:nth-child(3) { background:#c6e5df;color:#34786b; }
+    .vibe-product-wrap { padding: 0 25px 28px; }
+    .vibe-floating { position: relative; padding: 14px; background: #ffffffde; border: 1px solid #e8e5f7; border-radius: 20px; box-shadow: 0 17px 48px #7155bb26, 0 2px 7px #7155bb09; backdrop-filter: blur(15px); }
+    .vibe-window-nav { display:flex; justify-content: space-between; align-items:center; gap:8px; padding: 2px 3px 15px; font-size: 10px; font-weight: 800; color:#3c3c61; }
+    .vibe-dots { display:flex; gap:4px; }
+    .vibe-dots i { height:7px;width:7px;border-radius:50%;background:#f3b1ba; }
+    .vibe-dots i:nth-child(2) {background:#ffe0a4;} .vibe-dots i:nth-child(3) {background:#b7e5cc;}
+    .vibe-stats { display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+    .vibe-stat { border-radius: 12px; padding: 13px 10px; background:#f9f8ff; border:1px solid #eeebfa; }
+    .vibe-stat small { display:block; font-size: 9px; color:#8885aa; font-weight:650; }
+    .vibe-stat b { display:block; font-size: 19px; margin: 8px 0 2px; color:#33305b; letter-spacing:-.06em; }
+    .vibe-stat em {font-size:9px;color:#22a878;font-style:normal;font-weight:750;}
+    .vibe-chart { margin-top: 9px; padding: 13px; border:1px solid #eeeafa; border-radius:13px; background:white; }
+    .vibe-chart-header { display:flex;justify-content:space-between;align-items:center;color:#403d61;font-size:10px;font-weight:800; }
+    .vibe-chart-header span {font-size:9px;color:#9b98ab;font-weight:600;}
+    .vibe-bars { display:flex;align-items:end;gap:8px;height:87px;margin-top:12px;border-bottom:1px solid #f0edf8; }
+    .vibe-bars i {flex:1;border-radius:4px 4px 0 0;background:linear-gradient(#a995ff,#ece8ff); min-width:0;}
+    .vibe-features { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding: 7px 25px 38px; }
+    .vibe-feature { border:1px solid #eae6fa; border-radius: 13px; background:#ffffffd7; box-shadow:0 7px 16px #7159af0b; padding: 13px 11px; }
+    .vibe-feature-icon { width:25px;height:25px;display:grid;place-items:center;background:#ede9ff;color:#8067e0;border-radius:8px;font-size:13px; }
+    .vibe-feature b {display:block;font-size:10px;margin-top:10px;line-height:1.3;letter-spacing:-.025em;}
+    .vibe-feature p {margin:5px 0 0;color:#8989a2;font-size:9px;line-height:1.6;}
+    /* RIGHT: product and editorial design, meaning-led hierarchy */
+    .crafted-site { --ink:#242722; --muted:#686e64; --paper:#f2f0e8; --highlight:#dcec6a; color:var(--ink); font-family: Arial, Helvetica, sans-serif; background:var(--paper); min-height: 790px; }
+    .crafted-site .pane-nav { min-height: 79px; padding: 0 29px; border-bottom: 1px solid #d2d1c6; }
+    .crafted-brand { display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px;letter-spacing:-.07em;white-space:nowrap; }
+    .crafted-mark { display:block; width:23px;height:23px; background:#252922; position:relative; }
+    .crafted-mark:after { content:"";position:absolute;width:11px;height:11px;border:2px solid var(--paper);top:4px;left:4px;border-right:0;border-top:0;transform:rotate(-90deg); }
+    .crafted-site .pane-nav a { font-size:11px;font-weight:700;color:#4b514a; }
+    .crafted-site .pane-nav-links { gap:20px; }
+    .crafted-nav-cta { background:var(--ink);color:var(--paper)!important;padding:12px 12px;font-size:10px!important;white-space:nowrap; border:0; }
+    .crafted-hero { padding:36px 35px 38px; }
+    .crafted-topline { display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid #b9bbb0; gap:5px; font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:.13em; }
+    .crafted-topline span:last-child { color:#73796f; }
+    .crafted-hero h2 { margin:34px 0 20px; font-size:clamp(49px,5.55vw,94px); letter-spacing:-.09em; font-weight:760; line-height:.97; }
+    .crafted-hero h2 .serif { font-family:Georgia, 'Times New Roman', serif; font-weight:400; font-style:italic;letter-spacing:-.082em;white-space:nowrap; }
+    .crafted-description-row { display:flex;align-items:end;justify-content:space-between;gap:21px; }
+    .crafted-description { max-width:288px; margin:0; font-size:12px; line-height:1.75;color:#5d6259; }
+    .crafted-sun { width:64px;height:64px; border-radius:50%; background:var(--highlight);display:grid;place-items:center;flex-shrink:0;font-size:31px;font-weight:400;transform:rotate(-32deg); }
+    .crafted-actions { margin-top:23px;display:flex;align-items:center;gap:19px;flex-wrap:wrap; }
+    .crafted-primary { border:1px solid var(--ink); background:var(--ink);color:var(--paper);padding:14px 16px;font-size:11px;font-weight:750;min-height:43px; }
+    .crafted-text-link { background:none; border:0;border-bottom:1px solid var(--ink);padding:6px 0;font-size:11px;font-weight:750;color:var(--ink); }
+    .crafted-section-label { margin: 0 35px 13px; padding-top:13px;border-top:1px solid #b9bbb0;display:flex;justify-content:space-between;gap:8px;font-size:9px;font-weight:850;letter-spacing:.13em;text-transform:uppercase; }
+    .crafted-section-label span:last-child { color:#757b70; }
+    .crafted-workspace { margin: 0 25px 26px 35px; background:#fffdfa;display:grid;grid-template-columns:96px minmax(0,1fr); min-height:291px; border:1px solid #292c24;box-shadow:6px 6px 0 #d4d5c8; }
+    .workspace-rail {background:#262b25;color:#f4f4e9;padding:17px 9px;display:flex;flex-direction:column;gap:9px; }
+    .workspace-rail-head {font-family:Georgia,serif;font-size:19px;letter-spacing:-.07em;margin-bottom:16px;padding-left:5px;}
+    .workspace-rail a { display:block;text-decoration:none;color:#939e94;font-size:9px;padding:9px 7px;white-space:nowrap;border-radius:2px; }
+    .workspace-rail a.selected {background:#e0ed74;color:#242922;font-weight:800;}
+    .workspace-rail small {font-size:8px;color:#89928a;margin:auto 0 1px 5px;letter-spacing:.06em;}
+    .workspace-main { min-width:0;padding:18px 17px 15px; }
+    .workspace-title-row { display:flex;justify-content:space-between;align-items:start;gap:8px; }
+    .workspace-overline { font-size:8px;text-transform:uppercase;letter-spacing:.11em;font-weight:800;color:#8d9187; }
+    .workspace-title {font-size:20px;letter-spacing:-.064em;font-weight:750;margin:5px 0 13px;line-height:1.1;}
+    .workspace-date {border:1px solid #dadbd2;padding:7px;font-size:8px;font-weight:800;white-space:nowrap; }
+    .progress-label {display:flex;justify-content:space-between;gap:8px;font-size:9px;font-weight:750;margin-bottom:8px;}
+    .progress-track { height:5px;background:#eeeee6;overflow:hidden; }
+    .progress-fill { width:50%;height:100%;background:#252a23;transition:width .25s ease; }
+    .worklist-head {display:flex;justify-content:space-between;margin-top:16px;margin-bottom:8px;font-size:8px;color:#85887e;letter-spacing:.1em;font-weight:800;text-transform:uppercase;}
+    .work-task {border-top:1px solid #e7e7df;padding:9px 0;display:flex;align-items:center;gap:8px;min-height:34px;}
+    .work-task input {appearance:none; flex:none; width:14px;height:14px;margin:0;border:1.5px solid #8e9389;cursor:pointer;display:grid;place-items:center;border-radius:1px;}
+    .work-task input:checked {background:#272c25;border-color:#272c25;}
+    .work-task input:checked::after {content:'✓';color:#fff;font-size:11px;line-height:1;}
+    .work-task label {font-size:10px;letter-spacing:-.012em;line-height:1.3;cursor:pointer;flex:1;}
+    .work-task:has(input:checked) label {text-decoration:line-through;color:#9b9f96;}
+    .task-owner {width:17px;height:17px;border-radius:50%;background:#e9dac6;color:#5a4130;display:grid;place-items:center;font-size:8px;font-weight:750;flex:none;}
+    .task-owner.green {background:#dce8cf;color:#455e39;}
+    .workspace-tip { margin-top:6px;padding:8px 10px; background:#edf0e4;font-size:9px;color:#56604f;line-height:1.5; }
+    .crafted-bottom { padding: 0 35px 33px; }
+    .crafted-bottom-rule { border-top:1px solid #b9bbb0;padding-top:14px;display:flex;justify-content:space-between;gap:20px;align-items:start; }
+    .crafted-bottom p {margin:0;max-width:240px;font-size:13px;font-family:Georgia,serif;line-height:1.35;letter-spacing:-.025em;}
+    .crafted-bottom span {font-size:9px;line-height:1.5;font-weight:800;color:#777d70;text-transform:uppercase;letter-spacing:.09em;text-align:right;}
+    .design-notes {display:none; background:#202420; border:1px solid #414740;border-top:0; padding: 22px 0 0;grid-template-columns:1fr 1fr;gap:25px; }
+    .design-notes.visible {display:grid;}
+    .note { padding: 5px 23px 27px; min-width:0; }
+    .note h3 {margin:0 0 13px;font-size:15px;letter-spacing:-.03em;}
+    .note p {margin:0;color:#b5bcb4;font-size:12px;line-height:1.75;}
+    .note .note-details {display:flex;gap:8px;flex-wrap:wrap;margin-top:17px;}
+    .note .note-details span {color:#d6dcd4;border:1px solid #4a514a;padding:7px 9px;font-size:10px;}
+    .study-footer {display:flex;justify-content:space-between;gap:14px;color:#9ca69b;font-size:11px;line-height:1.65;padding-top:22px;}
+    .study-footer b {color:#ebf0e8;}
+    .overlay {position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:#0d100dc2;z-index:100;}
+    .overlay.open {display:flex;}
+    .modal {position:relative;width:min(100%,440px);padding:33px;background:#f3f1e9;color:#282d25;box-shadow:0 20px 80px #0008;}
+    .modal-close {position:absolute;right:16px;top:16px;border:1px solid #bfc2b5;background:transparent;width:31px;height:31px;font-size:19px;}
+    .modal-eyebrow {margin:0 0 13px;font-size:10px;letter-spacing:.15em;font-weight:850;text-transform:uppercase;color:#656c5e;}
+    .modal h2 {font-family:Georgia,serif;font-size:34px;letter-spacing:-.07em;font-weight:400;line-height:1.08;margin:0 0 14px;}
+    .modal p {font-size:13px;line-height:1.7;color:#646b60;}
+    .modal form {margin-top:19px;}
+    .modal label {font-size:11px;font-weight:800;display:block;margin-bottom:8px;}
+    .modal input {width:100%;background:#fffef9;border:1px solid #aaaFA3;padding:13px;outline-offset:3px;border-radius:0;color:#242922;}
+    .modal form button {margin-top:11px;width:100%;padding:13px;border:0;background:#252923;color:#fff;font-weight:800;}
+    .modal .fineprint {font-size:10px;color:#7c8177;}
+    .modal .success {display:none;}
+    .modal.submitted .form-content {display:none;}
+    .modal.submitted .success {display:block;}
+    @media (max-width: 1150px) {
+      .study {padding-left:16px;padding-right:16px;}
+      .toolbar-info {display:none;}
+      .toolbar {justify-content:center;}
+      .pane-nav-links {gap:9px;}
+      .pane-nav {padding-left:16px;padding-right:16px;}
+      .vibe-hero h2 {font-size:40px;}
+      .crafted-hero h2 {font-size:clamp(50px,5.6vw,78px);}
+      .crafted-site .pane-nav {padding-left:20px;padding-right:20px;}
+      .crafted-site .pane-nav-links {gap:12px;}
+    }
+    @media (max-width: 850px) {
+      .comparison:not(.mobile) {flex-direction:column;}
+      .comparison:not(.mobile) .panel + .panel {border-left:0;border-top:1px solid #414740;}
+      .comparison:not(.mobile) .panel {width:100%;}
+      .comparison:not(.mobile) .crafted-hero h2 {font-size:clamp(64px,12vw,115px);}
+      .design-notes {grid-template-columns:1fr;gap:0;}
+      .study-meta {display:none;}
+      .vibe-hero h2 {font-size:clamp(42px,8vw,67px);}
+      .toolbar {justify-content:flex-start;}
+    }
+    @media (max-width: 570px) {
+      .study {padding:0 10px 25px;}
+      .study-header {min-height:85px;}
+      .study-title {font-size:17px;}
+      .toolbar {padding:10px;}
+      .toolbar-controls {width:100%;justify-content:space-between;}
+      .segmented button {font-size:10px;padding:8px 9px;}
+      .tool-btn {font-size:10px;}
+      .pane-nav-links {display:none;}
+      .vibe-hero {padding-left:22px;padding-right:22px;}
+      .vibe-features {padding-left:14px;padding-right:14px;gap:6px;}
+      .vibe-feature {padding:10px 7px;}
+      .vibe-feature b {font-size:9px;}
+      .vibe-product-wrap {padding:0 14px 25px;}
+      .crafted-hero {padding-left:25px;padding-right:25px;}
+      .crafted-hero h2,.comparison:not(.mobile) .crafted-hero h2 {font-size:clamp(49px,10vw,72px);}
+      .crafted-section-label {margin-left:25px;margin-right:25px;}
+      .crafted-workspace {margin-left:15px;margin-right:15px;grid-template-columns:76px minmax(0,1fr);}
+      .workspace-rail {padding-left:5px;padding-right:5px;}
+      .workspace-main {padding:15px 10px;}
+      .workspace-title {font-size:18px;}
+      .crafted-bottom {padding-left:25px;padding-right:25px;}
+      .study-footer {display:block;}
+      .study-footer span {display:block;margin-top:8px;}
+    }
+    @media (prefers-reduced-motion: reduce) { html {scroll-behavior:auto;} *,*:before,*:after {transition-duration:0s!important;animation-duration:0s!important;} }
+  </style>
+</head>
+<body>
+  <main class="study">
+    <header class="study-header">
+      <div class="study-brand"><div class="study-icon" aria-hidden="true">D</div><div><h1 class="study-title">The anti-template experiment.</h1><p class="study-sub">One product. Two very different design decisions.</p></div></div>
+      <div class="study-meta">DAYMARK / UI STUDY<br>HTML · CSS · JAVASCRIPT</div>
+    </header>
+    <section class="toolbar" aria-label="Preview controls">
+      <div class="toolbar-info">Compare the direction, not just the decoration.</div>
+      <div class="toolbar-controls">
+        <div class="segmented" role="group" aria-label="Which version to preview">
+          <button class="active" data-view="both" aria-pressed="true">Side by side</button>
+          <button data-view="vibe" aria-pressed="false">AI default</button>
+          <button data-view="crafted" aria-pressed="false">Art directed</button>
+        </div>
+        <button class="tool-btn" id="screen-toggle" aria-pressed="false">↔ Mobile view</button>
+        <button class="tool-btn" id="notes-toggle" aria-pressed="false">+ Design notes</button>
+      </div>
+    </section>
+    <div class="comparison" id="comparison" data-view="both">
+      <article class="panel panel-vibe" aria-label="Generic AI generated design">
+        <div class="panel-label"><span><span class="label-number">01 /</span> DEFAULT VIBE-CODED UI</span><span>Template-led</span></div>
+        <div class="vibe-site">
+          <nav class="pane-nav" aria-label="Generic example navigation">
+            <div class="vibe-logo"><div class="vibe-logo-mark">✦</div> daymark</div>
+            <div class="pane-nav-links"><a href="#generic-features">Features</a><a href="#generic-features">Pricing</a><button class="vibe-nav-cta js-join">Get Started →</button></div>
+          </nav>
+          <section class="vibe-hero">
+            <div class="vibe-pill"><span class="vibe-pill-dot">✦</span> Introducing your AI-powered workspace</div>
+            <h2>Transform the way your team <strong>works together.</strong></h2>
+            <p class="vibe-desc">Unlock your team's full potential with our all-in-one platform. Streamline workflows, boost productivity, and achieve more with the power of AI.</p>
+            <div class="vibe-actions"><button class="vibe-primary js-join">Get Started Free →</button><button class="vibe-secondary js-tour" data-scroll-to="generic-features">Explore Features →</button></div>
+            <div class="vibe-proof"><span class="vibe-avatars" aria-hidden="true"><i>A</i><i>J</i><i>M</i></span> Trusted by teams around the world</div>
+          </section>
+          <section class="vibe-product-wrap" aria-label="Decorative productivity overview">
+            <div class="vibe-floating"><div class="vibe-window-nav"><span>✦ Your Productivity Dashboard</span><span class="vibe-dots"><i></i><i></i><i></i></span></div>
+              <div class="vibe-stats"><div class="vibe-stat"><small>Total Tasks</small><b>128</b><em>↗ +12.5%</em></div><div class="vibe-stat"><small>Completed</small><b>84%</b><em>↗ +8.2%</em></div><div class="vibe-stat"><small>Team Growth</small><b>24</b><em>↗ +6.4%</em></div></div>
+              <div class="vibe-chart"><div class="vibe-chart-header">Performance Overview <span>Last 7 days⌄</span></div><div class="vibe-bars" aria-hidden="true"><i style="height:38%"></i><i style="height:59%"></i><i style="height:45%"></i><i style="height:76%"></i><i style="height:56%"></i><i style="height:93%"></i><i style="height:78%"></i><i style="height:88%"></i><i style="height:70%"></i><i style="height:96%"></i></div></div>
+            </div>
+          </section>
+          <section class="vibe-features" id="generic-features" aria-label="Generic feature cards"><div class="vibe-feature"><div class="vibe-feature-icon">⚡</div><b>Lightning Fast</b><p>Supercharge your workflow.</p></div><div class="vibe-feature"><div class="vibe-feature-icon">✧</div><b>AI Powered</b><p>Smarter tools for teams.</p></div><div class="vibe-feature"><div class="vibe-feature-icon">▤</div><b>All-in-One</b><p>Everything in one place.</p></div></section>
+        </div>
+      </article>
+      <article class="panel panel-crafted" aria-label="Art directed product-first design">
+        <div class="panel-label"><span><span class="label-number">02 /</span> HUMAN-DIRECTED UI/UX</span><span>Purpose-led</span></div>
+        <div class="crafted-site">
+          <nav class="pane-nav" aria-label="Crafted example navigation">
+            <div class="crafted-brand"><span class="crafted-mark" aria-hidden="true"></span> daymark<span style="font-family:Georgia,serif;font-weight:400">.</span></div>
+            <div class="pane-nav-links"><a href="#crafted-product">The product</a><a href="#crafted-approach">Our approach</a><button class="crafted-nav-cta js-join">Start free ↗</button></div>
+          </nav>
+          <section class="crafted-hero" id="crafted-approach">
+            <div class="crafted-topline"><span>Made for small teams with big ideas</span><span>001 — 026</span></div>
+            <h2>Less noise.<br><span class="serif">More doing.</span></h2>
+            <div class="crafted-description-row"><p class="crafted-description">Projects, people, and priorities — finally in one calm place. Know what matters today, and get back to making things that matter.</p><span class="crafted-sun" aria-hidden="true">↗</span></div>
+            <div class="crafted-actions"><button class="crafted-primary js-join">Make room for good work&nbsp; ↗</button><button class="crafted-text-link js-tour" data-scroll-to="crafted-product">See how it works ↗</button></div>
+          </section>
+          <div class="crafted-section-label" id="crafted-product"><span>01 / Not another dashboard</span><span>A real view of the work</span></div>
+          <section class="crafted-workspace" aria-label="Interactive weekly task product preview">
+            <aside class="workspace-rail"><div class="workspace-rail-head">d.</div><a class="selected" href="#crafted-product">This week</a><a href="#crafted-product">Projects</a><a href="#crafted-product">Team notes</a><small>STUDIO SPACE<br>↗ 4 MEMBERS</small></aside>
+            <div class="workspace-main">
+              <div class="workspace-title-row"><div><div class="workspace-overline">Studio / your focus</div><h3 class="workspace-title">Monday, in motion.</h3></div><span class="workspace-date">NOV 02 ↗</span></div>
+              <div class="progress-label"><span>Today's momentum</span><span id="task-count" aria-live="polite">2 of 4 done</span></div><div class="progress-track" role="progressbar" aria-label="Completed tasks" aria-valuemin="0" aria-valuemax="4" aria-valuenow="2" id="task-progress"><div class="progress-fill" id="progress-fill"></div></div>
+              <div class="worklist-head"><span>What's worth your attention</span><span>OWNER</span></div>
+              <div class="work-task"><input id="task-a" type="checkbox" checked><label for="task-a">Share first concepts with Maya</label><span class="task-owner">JD</span></div>
+              <div class="work-task"><input id="task-b" type="checkbox"><label for="task-b">Review studio homepage</label><span class="task-owner green">MA</span></div>
+              <div class="work-task"><input id="task-c" type="checkbox" checked><label for="task-c">Send proposal to the client</label><span class="task-owner green">MA</span></div>
+              <div class="work-task"><input id="task-d" type="checkbox"><label for="task-d">Finalize the visual direction</label><span class="task-owner">JD</span></div>
+              <div class="workspace-tip">↳ Try checking a task. The progress updates for real.</div>
+            </div>
+          </section>
+          <section class="crafted-bottom"><div class="crafted-bottom-rule"><p>Good tools shouldn't demand your attention. They should give it back.</p><span>Less managing<br>More making · ↗</span></div></section>
+        </div>
+      </article>
+    </div>
+    <section class="design-notes" id="design-notes" aria-label="UX design comparison notes">
+      <div class="note"><h3>What feels “AI-generated” on the left?</h3><p>Vague outcome claims, a gradient headline, invented-looking dashboard metrics, interchangeable feature cards, a familiar purple CTA, and little evidence of the user's actual day-to-day problem. The visual finish is fine; the product thinking is thin.</p><div class="note-details"><span>Generic copy</span><span>Decorative dashboard</span><span>Pattern repetition</span></div></div>
+      <div class="note"><h3>Why the right side feels more intentional</h3><p>It opens with a concrete promise, uses an editorial visual identity, gives the product itself room to prove the value, and lets you complete a real micro-interaction. The hierarchy, visual rhythm, and restrained colors support the story.</p><div class="note-details"><span>Distinct brand voice</span><span>Functional demo</span><span>Clear hierarchy</span></div></div>
+    </section>
+    <footer class="study-footer"><span><b>Takeaway:</b> Better design is not simply fewer gradients. It starts with a specific user, a specific promise, and evidence in the interface.</span><span>Try the view controls, task checkboxes, and CTA buttons.</span></footer>
+  </main>
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal" id="modal"><button class="modal-close" id="modal-close" aria-label="Close dialog">×</button>
+      <div class="form-content"><p class="modal-eyebrow">DAYMARK / INTERACTIVE DEMO</p><h2 id="modal-title">A better week starts here.</h2><p>This is a front-end concept, not a live signup service. Submit any valid email format to see the prototype confirmation. Nothing is sent or stored.</p><form id="signup"><label for="email">Email address</label><input id="email" type="email" placeholder="you@yourstudio.com" required autocomplete="off"><button type="submit">Preview the next step ↗</button></form><p class="fineprint">Prototype only · No network request · No data collection</p></div>
+      <div class="success"><p class="modal-eyebrow">DEMO / NEXT STEP</p><h2>You're all set to explore.</h2><p>In a real app, onboarding would begin here. In this prototype, your email stays in the browser and has not been submitted anywhere.</p><button class="crafted-primary" id="success-close">Back to the comparison ↗</button></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      const comparison = document.getElementById('comparison');
+      const viewButtons = document.querySelectorAll('[data-view]');
+      viewButtons.forEach(btn => btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-view');
+        comparison.setAttribute('data-view', mode);
+        viewButtons.forEach(b => { const active = b === btn; b.classList.toggle('active', active); b.setAttribute('aria-pressed', String(active)); });
+      }));
+      const mobileButton = document.getElementById('screen-toggle');
+      mobileButton.addEventListener('click', () => {
+        const isMobile = comparison.classList.toggle('mobile');
+        mobileButton.textContent = isMobile ? '▣ Desktop view' : '↔ Mobile view';
+        mobileButton.setAttribute('aria-pressed', String(isMobile));
+      });
+      const notes = document.getElementById('design-notes');
+      const notesButton = document.getElementById('notes-toggle');
+      notesButton.addEventListener('click', () => {
+        const visible = notes.classList.toggle('visible');
+        notesButton.textContent = visible ? '− Hide design notes' : '+ Design notes';
+        notesButton.setAttribute('aria-pressed', String(visible));
+      });
+      const tasks = Array.from(document.querySelectorAll('.work-task input'));
+      function updateTasks() {
+        const done = tasks.filter(task => task.checked).length;
+        document.getElementById('task-count').textContent = done + ' of ' + tasks.length + ' done';
+        document.getElementById('task-progress').setAttribute('aria-valuenow', String(done));
+        document.getElementById('progress-fill').style.width = Math.round(done / tasks.length * 100) + '%';
+      }
+      tasks.forEach(task => task.addEventListener('change', updateTasks));
+      updateTasks();
+      const overlay = document.getElementById('overlay');
+      const modal = document.getElementById('modal');
+      const email = document.getElementById('email');
+      let lastTrigger = null;
+      function openModal(trigger) { lastTrigger = trigger; modal.classList.remove('submitted'); document.getElementById('signup').reset(); overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); document.getElementById('modal-close').focus(); }
+      function closeModal() { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); email.value = ''; if (lastTrigger) lastTrigger.focus(); }
+      document.querySelectorAll('.js-join').forEach(button => button.addEventListener('click', () => openModal(button)));
+      document.querySelectorAll('.js-tour').forEach(button => button.addEventListener('click', () => { document.getElementById(button.getAttribute('data-scroll-to')).scrollIntoView({behavior:'smooth', block:'center'}); }));
+      document.getElementById('modal-close').addEventListener('click', closeModal);
+      document.getElementById('success-close').addEventListener('click', closeModal);
+      overlay.addEventListener('click', event => { if (event.target === overlay) closeModal(); });
+      document.addEventListener('keydown', event => { if (event.key === 'Escape' && overlay.classList.contains('open')) closeModal(); });
+      document.getElementById('signup').addEventListener('submit', event => { event.preventDefault(); if (email.checkValidity()) { modal.classList.add('submitted'); document.getElementById('success-close').focus(); } });
+    })();
+  </script>
+</body>
+</html>
